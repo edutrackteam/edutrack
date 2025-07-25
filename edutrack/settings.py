@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-import logging
-import sys
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,24 +75,6 @@ TEMPLATES = [
         },
     },
 ]
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
 
 WSGI_APPLICATION = 'edutrack.wsgi.application'
 
