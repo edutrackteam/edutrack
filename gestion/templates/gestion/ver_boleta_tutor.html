@@ -1,0 +1,105 @@
+{% extends 'base_tutor.html' %}
+{% block content %}
+
+<style>
+  .boleta-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .boleta-header {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 30px;
+  }
+
+  .boleta-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+    color: #374151;
+    font-size: 16px;
+  }
+
+  .boleta-info p {
+    flex: 1 1 45%;
+    margin: 0;
+  }
+
+  .boleta-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  .boleta-table thead {
+    background-color: #f3f4f6;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .boleta-table th,
+  .boleta-table td {
+    border: 1px solid #d1d5db;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .boleta-table td {
+    background-color: #ffffff;
+  }
+
+  .boleta-table tr:hover td {
+    background-color: #f9fafb;
+  }
+
+  .boleta-table td.promedio {
+    font-weight: bold;
+    color: #2563eb;
+  }
+</style>
+
+<div class="boleta-container">
+  <div class="boleta-header">Boleta de Calificaciones</div>
+
+  <div class="boleta-info">
+    <p><strong>Alumno:</strong> {{ alumno.nombre_completo }} </p>
+    <p><strong>Grado y Grupo:</strong> {{ alumno.grupo.grado }}° {{ alumno.grupo.seccion }}</p>
+    <p><strong>Ciclo Escolar:</strong> {{ alumno.grupo.ciclo_escolar }}</p>
+    <p><strong>Profesor:</strong> {{ profesor.usuario.nombre }} </p>
+    <a href="{% url 'boleta_pdf' alumno.id %}" class="btn btn-primary" target="_blank">Descargar Boleta PDF</a>
+  </div>
+
+  <table class="boleta-table">
+    <thead>
+      <tr>
+        <th>Materia</th>
+        <th>Trimestre 1</th>
+        <th>Trimestre 2</th>
+        <th>Trimestre 3</th>
+        <th>Promedio</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for materia, trimestres in boleta.items %}
+      <tr>
+        <td>{{ materia }}</td>
+        <td>{{ trimestres.1 }}</td>
+        <td>{{ trimestres.2 }}</td>
+        <td>{{ trimestres.3 }}</td>
+        <td class="promedio">{{ trimestres.promedio }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

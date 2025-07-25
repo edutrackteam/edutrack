@@ -1,0 +1,162 @@
+{% extends 'base_profesor.html' %}
+{% block title %}Panel del Profesor{% endblock %}
+
+{% block content %}
+<div class="card-panel">
+  <div class="encabezado-panel">
+    <h2>Bienvenido, {{ profesor.usuario.nombre }}</h2>
+    <a href="{% url 'ver_calificaciones' %}" class="btn-volver">← Ver calificaciones</a>
+  </div>
+
+  <input type="text" id="searchAlumno" placeholder="Buscar alumno..." class="buscador" />
+
+  <ul class="lista-alumnos">
+    {% for alumno in alumnos %}
+      <li class="alumno-item" data-nombre="{{ alumno.nombre_completo|lower }}">
+        <button class="alumno-nombre" aria-expanded="false" aria-controls="materias-{{ alumno.id }}" id="alumno-btn-{{ alumno.id }}">
+          {{ alumno.nombre_completo }}
+          <span class="icono-toggle">▶</span>
+        </button>
+        <div id="materias-{{ alumno.id }}" class="materias-lista" aria-labelledby="alumno-btn-{{ alumno.id }}" hidden>
+          {% for materia in materias %}
+            <a href="{% url 'registrar_calificacion_alumno' alumno.id materia.id %}" class="btn-materia">
+              {{ materia.materia_base.nombre }}
+            </a>
+          {% endfor %}
+        </div>
+      </li>
+    {% empty %}
+      <p>No hay alumnos asignados a este grupo.</p>
+    {% endfor %}
+  </ul>
+</div>
+
+<style>
+  .encabezado-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .btn-volver {
+    background-color: #3f5d6b;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(63, 93, 107, 0.4);
+  }
+  .btn-volver:hover {
+    background-color: #2a4150;
+    box-shadow: 0 3px 8px rgba(41, 65, 80, 0.7);
+  }
+
+  .buscador {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    font-size: 16px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .lista-alumnos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .alumno-item {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+  }
+
+  .alumno-nombre {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: #223344;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .alumno-nombre:hover {
+    color: #3f5d6b;
+  }
+
+  .icono-toggle {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    color: #3f5d6b;
+  }
+
+  .alumno-nombre[aria-expanded="true"] .icono-toggle {
+    transform: rotate(90deg);
+  }
+
+  .materias-lista {
+    margin-top: 8px;
+    padding-left: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .btn-materia {
+    background-color: #5a7d9a;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(90, 125, 154, 0.4);
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-materia:hover {
+    background-color: #3f5d6b;
+    box-shadow: 0 4px 10px rgba(63, 93, 107, 0.7);
+  }
+</style>
+
+<script>
+  const searchInput = document.getElementById('searchAlumno');
+  const alumnoItems = document.querySelectorAll('.alumno-item');
+
+  searchInput.addEventListener('input', () => {
+    const filtro = searchInput.value.toLowerCase();
+    alumnoItems.forEach(item => {
+      const nombre = item.getAttribute('data-nombre');
+      item.style.display = nombre.includes(filtro) ? '' : 'none';
+    });
+  });
+
+  // Toggle acordeón materias
+  document.querySelectorAll('.alumno-nombre').forEach(button => {
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', !expanded);
+      const materiasDiv = document.getElementById(button.getAttribute('aria-controls'));
+      if (!expanded) {
+        materiasDiv.removeAttribute('hidden');
+      } else {
+        materiasDiv.setAttribute('hidden', '');
+      }
+    });
+  });
+</script>
+
+{% endblock %}

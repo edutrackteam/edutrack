@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Boleta de Calificaciones</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            color: #222;
+            margin: 40px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .alumno-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 20px;
+        }
+
+        .alumno-info div {
+            padding: 5px;
+            border-radius: 6px;
+            
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+
+        td {
+            background: #fff;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .promedio {
+            font-weight: bold;
+            background: #e8f7e8;
+        }
+
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            height: 80px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Boleta de Calificaciones</h1>
+    <h2>Telesecundaria · Ciclo Escolar {{ alumno.grupo.ciclo_escolar }}</h2>
+
+    <div class="alumno-info">
+        <div><strong>Alumno:</strong> {{ alumno.nombre_completo }}</div>
+        <div><strong>Fecha:</strong> {{ fecha }}</div>
+        <div><strong>Grado:</strong> {{ alumno.grupo.grado }}° {{ alumno.grupo.seccion }}</div>
+        <div><strong>CURP:</strong> {{ alumno.curp }}</div>
+        <div><strong>Profesor:</strong> {{ profesor.usuario.nombre }}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Materia</th>
+                <th>1er Trimestre</th>
+                <th>2do Trimestre</th>
+                <th>3er Trimestre</th>
+                <th>Promedio</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for materia, trimestres in boleta.items %}
+            <tr>
+                <td>{{ materia }}</td>
+                <td>{{ trimestres.1|default:"" }}</td>
+                <td>{{ trimestres.2|default:"" }}</td>
+                <td>{{ trimestres.3|default:"" }}</td>
+                <td class="promedio">{{ trimestres.promedio|default:"" }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Documento generado automáticamente por Telesecundaria No. 51.
+    </div>
+
+</body>
+</html>

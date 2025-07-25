@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #496779;
+            padding: 40px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            max-width: 1000px;
+            margin: auto;
+            padding: 50px;
+            position: relative;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-header img {
+            width: 60px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #375364;
+        }
+
+        .line {
+            border: none;
+            height: 1px;
+            background-color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #375364;
+            margin-bottom: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #444;
+        }
+
+        input {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #f1b865;
+            font-size: 14px;
+        }
+
+        .submit-btn {
+            background-color: #e0aa5c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            float: right;
+        }
+        .messages {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .errorlist {
+            font-weight: bold;
+            color: #b00020;
+            font-size: 13px;
+            margin-top: 5px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <img src="/static/registro/logo.png" alt="Logo"> <!-- Cambia por tu ruta estática -->
+            <div class="form-title">Registro de Padres de Familia / Tutores</div>
+        </div>
+        <hr class="line">
+        <form method="post">
+            {% csrf_token %}
+            <div class="section-title">Datos generales</div>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                    {{ form.nombre.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.apellido_materno.label_tag }}
+                    {{ form.apellido_materno }}
+                    {{ form.apellido_materno.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.apellido_paterno.label_tag }}
+                    {{ form.apellido_paterno }}
+                    {{ form.apellido_paterno.errors }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.curp.label_tag }}
+                    {{ form.curp }}
+                    {{ form.curp.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.correo.label_tag }}
+                    {{ form.correo }}
+                    {{ form.correo.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
+                    {{ form.telefono.errors }}
+                </div>
+            </div>
+
+            <div class="section-title">Contraseña</div>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.contraseña_hash.label_tag }}
+                    {{ form.contraseña_hash }}
+                    {{ form.contraseña_hash.errors }}
+                </div>
+                <div class="form-group">
+                    {{ form.confirmar_contraseña.label_tag }}
+                    {{ form.confirmar_contraseña }}
+                    {{ form.confirmar_contraseña.errors }}
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Registrarse</button>
+        </form>
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if form.non_field_errors %}
+    <ul class="errorlist">
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>

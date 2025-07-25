@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Panel profesor{% endblock %}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6f8fa;
+      color: #333;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background-color: #3f5d6b;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 40px 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 3px 0 8px rgba(0,0,0,0.1);
+      transition: width 0.3s ease;
+    }
+
+    .sidebar h3 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      user-select: none;
+      text-align: center;
+    }
+
+    .user-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      border: 2px solid #fff;
+    }
+
+    .sidebar a {
+      width: 100%;
+      text-align: left;
+      display: block;
+      color: white;
+      margin: 10px 0;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 6px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a:focus {
+      background-color: #315061;
+      outline: none;
+    }
+
+    .sidebar a.logout {
+      margin-top: auto;
+      color: #ddd;
+    }
+
+    .sidebar a.logout:hover {
+      background-color: #2a4150;
+      color: #fff;
+    }
+
+    /* Contenido principal */
+    .contenido {
+      margin-left: 240px;
+      padding: 40px 50px;
+      min-height: 100vh;
+      background-color: white;
+      box-shadow: inset 0 0 20px #f0f0f0;
+      border-radius: 0 20px 20px 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Panel tarjeta */
+    .card-panel {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>Panel Profesor</h3>
+
+    {% if usuario.foto %}
+      <img src="{{ usuario.foto.url }}" alt="Foto de perfil" class="user-photo">
+    {% else %}
+      <img src="{% static 'img/default-user.webp' %}" alt="Foto por defecto" class="user-photo">
+    {% endif %}
+
+    <a href="{% url 'perfil_profesor' %}">Mi Perfil</a>
+    <a href="{% url 'ver_calificaciones' %}">Calificar</a>
+    <a href="{% url 'logout' %}" class="logout">Cerrar sesión</a>
+  </div>
+
+  <div class="contenido">
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>

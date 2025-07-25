@@ -1,0 +1,107 @@
+{% include 'gestion/partials/sidebar.html' %}
+<div class="contenido-principal">
+  <h2 class="titulo-seccion">Alumnos del grupo {{ grupo }}</h2>
+
+  {% if alumnos %}
+    <div class="tabla-contenedor">
+      <table class="tabla-alumnos">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>CURP</th>
+            <th>Fecha de nacimiento</th>
+            <th>Sexo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alumno in alumnos %}
+            <tr>
+              <td>{{ alumno.nombre_completo }}</td>
+              <td>{{ alumno.curp }}</td>
+              <td>{{ alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
+              <td>{{ alumno.sexo }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="mensaje-vacio">No hay alumnos registrados en este grupo.</div>
+  {% endif %}
+
+  <a href="{% url 'lista_grupos' %}" class="btn-volver">← Volver a grupos</a>
+</div>
+
+<style>
+  .contenido-principal {
+    margin-left: 240px; /* asegúrate que coincide con el ancho de tu sidebar */
+    padding: 40px;
+    background-color: #f4f7fb;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .titulo-seccion {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+
+  .tabla-contenedor {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    overflow-x: auto;
+  }
+
+  .tabla-alumnos {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .tabla-alumnos th,
+  .tabla-alumnos td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+  }
+
+  .tabla-alumnos th {
+    background-color: #ecf0f1;
+    color: #34495e;
+    font-weight: bold;
+  }
+
+  .tabla-alumnos tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .mensaje-vacio {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+  }
+
+  .btn-volver {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #3f5d6b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+
+  .btn-volver:hover {
+    background-color: #2f4755;
+  }
+</style>

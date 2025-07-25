@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Grupo 1º A - Lista de Alumnos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #375865;
+      color: white;
+      padding: 30px 0;
+      height: 100vh;
+      border-radius: 0 30px 30px 0;
+    }
+    .sidebar .icon-label {
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+      color: white;
+      cursor: pointer;
+    }
+    .sidebar .icon-label:hover,
+    .sidebar .icon-label.active {
+      background-color: #5f8596;
+      border-radius: 10px 0 0 10px;
+    }
+    .icon-label i {
+      margin-right: 15px;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .header h2 {
+      color: #375865;
+    }
+    .header .user-info {
+      text-align: right;
+      font-size: 14px;
+    }
+    .header .user-info strong {
+      display: block;
+    }
+    .table-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+    th {
+      color: #375865;
+      border-bottom: 2px solid #eee;
+    }
+    td {
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .acciones button {
+      margin-right: 5px;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-calif {
+      background-color: #f4c57a;
+      color: white;
+    }
+    .btn-editar {
+      background-color: #98dfb6;
+      color: #1f513b;
+    }
+    .btn-eliminar {
+      background-color: #f9b5b5;
+      color: #912f2f;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .top-actions .search {
+      display: flex;
+      align-items: center;
+    }
+    .search input {
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-right: 8px;
+    }
+    .btn-agregar {
+      background-color: #375865;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+    .form-container, .confirm-container {
+      background-color: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: 50px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    .form-container h2, .confirm-container h2 {
+      color: #375865;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+    form input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background-color: #375865;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .cancel {
+      background-color: #aaa;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="icon-label active"><i class="fas fa-user-graduate"></i> Grupos</div>
+    <div class="icon-label"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h2>Bienvenidos al Sistema Web de Seguimiento Académico</h2>
+      <div class="user-info">
+        <strong>Nombre</strong>
+        Directivo / Administrador
+      </div>
+    </div>
+
+    {% if form %}
+    <div class="form-container">
+      <h2>{{ accion }} Alumno</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+        <a href="" class="cancel">Cancelar</a>
+      </form>
+    </div>
+    {% elif alumno %}
+    <div class="confirm-container">
+      
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit">Eliminar</button>
+        <a href="" class="cancel">Cancelar</a>
+      </form>
+    </div>
+    {% else %}
+    <div class="top-actions">
+      <h2>Grupo ---</h2>
+      <div class="search">
+        <input type="text" placeholder="Buscar...">
+        <button class="btn-agregar" href="">Agregar alumno</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Nombre completo</th>
+            <th>CURP</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alumno in alumnos %}
+          <tr>
+            <td>{{ forloop.counter|add:"00"|slice:"-2:" }}</td>
+            <td>{{ alumno.nombre_completo }}</td>
+            <td>{{ alumno.curp }}</td>
+            <td class="acciones">
+              <button class="btn-calif">Calificaciones</button>
+              <button class="btn-editar" href=""><i class="fas fa-pen"></i></button>
+              <button class="btn-eliminar" href=""><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4">No hay alumnos registrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

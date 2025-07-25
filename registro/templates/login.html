@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de Sesión</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            display: flex;
+            width: 900px;
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .login-left {
+            width: 50%;
+            background-color: #4d6c7a;
+        }
+        .login-right {
+            width: 50%;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #37474f;
+        }
+        p {
+            margin-bottom: 30px;
+            color: #666;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0aa5c;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-login {
+            background-color: #4d6c7a;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .btn-register {
+            background-color: #7ea1b4;
+            color: white;
+        }
+        .forgot {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .forgot a {
+            color: #37474f;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .messages div {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .g-recaptcha {
+            margin: 10px 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-left">
+                <!-- Puedes poner una imagen de fondo aquí -->
+            </div>
+            <div class="login-right">
+                <img src="{% static '/registro/logo.png' %}" alt="Logo" style="width: 50px; margin-bottom: 20px;">
+                <h2>Inicio de sesión Padres de Familia</h2>
+                <p>Bienvenidos al Sistema Web de Seguimiento Académico</p>
+                <hr style="margin-bottom: 20px;">
+
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <label for="correo">Correo electrónico</label>
+                    <input type="text" name="correo" id="correo" required value="{{ form.data.correo|default_if_none:'' }}">
+
+                    <label for="contraseña">Contraseña</label>
+                    <input type="password" name="contraseña" id="contraseña" required>
+
+                    <div class="g-recaptcha" data-sitekey="6LeYgI4rAAAAALtBvgAFAzpij6oMmzYjgrRYP1pU"></div>
+
+                    <button class="btn-login" type="submit">Iniciar Sesión</button>
+
+                    <a href="{% url 'registro_tutor' %}">
+                        <button class="btn-register" type="button">Registrarse</button>
+                    </a>
+                </form>
+
+                <div class="forgot">
+                    <p><strong>¿Olvidaste tu contraseña?</strong><br>
+                    <a href="#">Restablecer contraseña</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

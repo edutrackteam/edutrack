@@ -1,0 +1,270 @@
+{% include 'gestion/partials/sidebar.html' %}
+
+<div class="contenedor">
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <h2 class="titulo">Materias por grado</h2>
+
+  <button class="btn-nuevo" onclick="abrirModalMateria()">Agregar materia</button>
+
+  <div class="contenedor-tarjetas">
+    {% for materia in materias %}
+      <div class="tarjeta">
+        <h4>{{ materia.materia_base.nombre }}</h4>
+        <p>Grado: {{ materia.get_grado_display }}</p>
+        <button type="button" class="btn-editar" onclick="abrirModalEditar('{{ materia.materia_base.id }}')">Editar nombre</button>
+      </div>
+    {% empty %}
+      <p>No hay materias registradas aún.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal Agregar Materia -->
+<div id="modalMateria" class="modal" style="display: none;">
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarModalMateria()">&times;</span>
+    <h3>Agregar materia</h3>
+    <form method="post" class="form-modal">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="selectMateria">Selecciona una materia</label>
+        <select name="materia_base" id="selectMateria" required onchange="toggleNuevaMateria(this.value)">
+          <option value="" disabled selected>Selecciona una materia</option>
+          {% for m in materias_base %}
+            <option value="{{ m.id }}">{{ m.nombre }}</option>
+          {% endfor %}
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-group" id="nuevoNombreDiv" style="display:none;">
+        <label for="nuevoNombre">Nombre de la nueva materia</label>
+        <input type="text" name="nueva_materia" id="nuevoNombre" maxlength="100">
+      </div>
+      <div class="form-group">
+        <label>Grado</label>
+        <select name="grado" required>
+          <option value="" disabled selected>Selecciona grado</option>
+          <option value="1">1°</option>
+          <option value="2">2°</option>
+          <option value="3">3°</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancelar" onclick="cerrarModalMateria()">Cancelar</button>
+        <button type="submit" class="btn-agregar-modal">Agregar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Editar Materia Base -->
+<div id="modalEditarMateria" class="modal" style="display:none;">
+  <div class="modal-contenido" id="contenidoEditarMateria">
+    <!-- Aquí se cargará el formulario por AJAX -->
+  </div>
+</div>
+
+<style>
+  .contenedor {
+    margin-left: 250px;
+    padding: 30px;
+  }
+
+  .titulo {
+    font-size: 26px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+
+  .btn-nuevo {
+    background-color: #3f5d6b;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .contenedor-tarjetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .tarjeta {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 250px;
+    position: relative;
+  }
+
+  .tarjeta h4 {
+    margin: 0 0 10px;
+    color: #34495e;
+  }
+
+  .btn-editar {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: #3f5d6b;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-contenido {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 40px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .cerrar {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+  }
+
+  .form-modal .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-modal input,
+  .form-modal select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .btn-cancelar,
+  .btn-agregar-modal {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-cancelar {
+    background-color: #ecf0f1;
+    color: #333;
+  }
+
+  .btn-agregar-modal {
+    background-color: #3f5d6b;
+    color: white;
+  }
+  .messages {
+    margin-bottom: 20px;
+  }
+  .alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .alert-error,
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+</style>
+
+<script>
+  function abrirModalMateria() {
+    document.getElementById('modalMateria').style.display = 'flex';
+  }
+
+  function cerrarModalMateria() {
+    document.getElementById('modalMateria').style.display = 'none';
+    // limpiar campos al cerrar
+    document.getElementById('selectMateria').value = "";
+    document.getElementById('nuevoNombreDiv').style.display = 'none';
+    document.getElementById('nuevoNombre').value = "";
+  }
+
+  function toggleNuevaMateria(valor) {
+    if (valor === 'otro') {
+      document.getElementById('nuevoNombreDiv').style.display = 'block';
+      document.getElementById('nuevoNombre').required = true;
+    } else {
+      document.getElementById('nuevoNombreDiv').style.display = 'none';
+      document.getElementById('nuevoNombre').required = false;
+    }
+  }
+
+  // Modal Editar Materia Base
+  function abrirModalEditar(id) {
+    fetch(`/gestion/materias/editar/${id}/`)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('contenidoEditarMateria').innerHTML = html;
+        document.getElementById('modalEditarMateria').style.display = 'flex';
+      });
+  }
+
+  function cerrarModalEditar() {
+    document.getElementById('modalEditarMateria').style.display = 'none';
+    document.getElementById('contenidoEditarMateria').innerHTML = '';
+  }
+</script>

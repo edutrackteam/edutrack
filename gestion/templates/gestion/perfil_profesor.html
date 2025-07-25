@@ -1,0 +1,38 @@
+{% extends "base_profesor.html" %}
+{% load static %}
+
+{% block title %}Mi perfil{% endblock %}
+
+{% block content %}
+<div class="card-panel">
+  <h2 style="margin-bottom: 20px;">Mi perfil</h2>
+
+  <div style="display: flex; align-items: center; gap: 30px;">
+    <div>
+      {% if usuario.foto %}
+        <img src="{{ usuario.foto.url }}" alt="Foto de perfil" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #3f5d6b;">
+      {% else %}
+        <img src="{% static 'img/default-user.webp' %}" alt="Foto por defecto" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ccc;">
+      {% endif %}
+    </div>
+
+    <div>
+      <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+      <p><strong>Correo:</strong> {{ usuario.correo }}</p>
+      <p><strong>CURP:</strong> {{ usuario.curp }}</p>
+    </div>
+  </div>
+
+  <hr style="margin: 30px 0; border-color: #ddd;">
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="foto" style="font-weight: bold;">Actualizar foto de perfil:</label><br><br>
+    <input type="file" name="foto" id="foto" accept="image/*" required style="margin-bottom: 20px;"><br>
+    <button type="submit" style="padding: 10px 20px; background-color: #3f5d6b; color: white; border: none; border-radius: 8px; cursor: pointer;">
+      Subir foto
+    </button>
+  </form>
+
+</div>
+{% endblock %}

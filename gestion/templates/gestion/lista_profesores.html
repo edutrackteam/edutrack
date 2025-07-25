@@ -1,0 +1,440 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Profesores</title>
+    <link rel="stylesheet" href="{% static 'gestion/estilos_dashboard.css' %}">
+    <style>
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        .table-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .table-header h2 {
+            margin: 0;
+            color: #3f5d6b;
+        }
+        .btn-agregar {
+            padding: 10px 20px;
+            background-color: #6c8797;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            color: #6b7c88;
+            font-weight: bold;
+        }
+        .acciones button {
+            margin-right: 5px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .vermas { background-color: #fdd998; color: #6b4f1d; }
+        .editar { background-color: #c7f7cc; color: #1e5631; }
+        .eliminar { background-color: #f7c8c8; color: #7d1d1d; }
+
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 10;
+          left: 0; top: 0;
+          width: 100%; height: 100%;
+          overflow: auto;
+          background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-contenido {
+          background-color: #fff;
+          margin: 5% auto;
+          padding: 25px 40px;
+          border-radius: 12px;
+          width: 60%;
+          box-shadow: 0 0 10px rgba(0,0,0,0.3);
+          position: relative;
+        }
+
+        .cerrar {
+          position: absolute;
+          top: 15px;
+          right: 25px;
+          font-size: 24px;
+          color: #666;
+          cursor: pointer;
+        }
+
+        h2, h4 {
+          color: #3f5d6b;
+          margin-bottom: 15px;
+        }
+
+        .form-row {
+          display: flex;
+          gap: 15px;
+          margin-bottom: 15px;
+        }
+
+        input, select {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          flex: 1;
+        }
+
+        .input-full {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        .form-actions {
+          text-align: right;
+          margin-top: 20px;
+        }
+
+        .btn-cancelar, .btn-agregar-modal {
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .btn-cancelar {
+          background-color: #ccc;
+          color: #333;
+          margin-right: 10px;
+        }
+
+        .btn-agregar-modal {
+          background-color: #3f5d6b;
+          color: white;
+        }
+
+        #modalProfesor {
+          z-index: 10;
+        }
+
+        #modalEditarProfesor {
+          z-index: 20;
+        }
+        .messages {
+          margin-bottom: 20px;
+        }
+        .alert {
+          padding: 15px 20px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          font-weight: bold;
+        }
+        .alert-success {
+          background-color: #d4edda;
+          color: #155724;
+        }
+        .alert-error,
+        .alert-danger {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+        .alert-warning {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+        .alert-info {
+          background-color: #d1ecf1;
+          color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    {% include 'gestion/partials/sidebar.html' %}  {# Menú lateral #}
+    
+    <div class="main-content">
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Profesores</h2>
+                <button type="button" class="btn-agregar" onclick="abrirModal()">Agregar</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Nombre completo</th>
+                        <th>Grado/grupo asignado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profesor in profesores %}
+                        <tr>
+                            <td>{{ forloop.counter|add:'0'|slice:"-2" }}</td>
+                            <td>{{ profesor.usuario.nombre }} {{ profesor.usuario.apellido_paterno }}</td>
+                            <td>{{ profesor.grupo }}</td>
+                            <td class="acciones">
+                              <button type="button" class="vermas">Ver más</button>
+                              <button type="button" class="btn-editar" data-id="{{ profesor.id }}">✏️</button>
+                              <form method="post" action="{% url 'eliminar_profesor' profesor.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este profesor?')">🗑️</button>
+                              </form>
+                            </td>
+
+
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4">No hay profesores registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal flotante -->
+    <div id="modalProfesor" class="modal">
+      <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModal()">&times;</span>
+        <h2>Agregar profesor</h2>
+
+        <form id="formAgregarProfesor" method="post">
+          {% csrf_token %}
+
+          <h4>Datos personales</h4>
+          <div class="form-row">
+                <input type="text" name="nombre" placeholder="Nombre completo" required
+                  pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+                  title="El nombre sólo puede contener letras y espacios">
+                <input type="text" name="curp" placeholder="CURP" required
+                  pattern="[A-Z0-9]{18}"
+                  maxlength="18"
+                  minlength="18"
+                  title="CURP debe tener exactamente 18 caracteres en mayúsculas y números"
+                  oninput="this.value = this.value.toUpperCase();">
+          </div>
+
+          <div class="form-row">
+            <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" required>
+            <select name="sexo" required>
+              <option value="">Selecciona sexo</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </div>
+
+          <h4>Datos de contacto</h4>
+          <div class="form-row">
+            <input type="email" name="correo" placeholder="Correo electrónico" required>
+            <input type="tel" name="telefono" placeholder="Teléfono celular" required
+              pattern="\d{10}"
+              maxlength="10"
+              minlength="10"
+              title="El teléfono debe contener 10 dígitos numéricos">
+          </div>
+          <input type="text" name="direccion" placeholder="Dirección" class="input-full" required>
+
+          <h4>Datos académicos</h4>
+          <div class="form-row">
+            <input type="date" name="fecha_ingreso" required>
+          </div>
+
+          <select name="grupo" class="input-full" required>
+            <option value="">Asignar grupo</option>
+            {% for grupo in grupos %}
+              <option value="{{ grupo.id }}">{{ grupo }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="form-actions">
+            <button type="button" onclick="cerrarModal()" class="btn-cancelar">Cancelar</button>
+            <button type="submit" class="btn-agregar-modal">Agregar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal flotante para edición -->
+    <div id="modalEditarProfesor" class="modal">
+      <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModalEditar()">&times;</span>
+        <div id="formEditarProfesorCargado">
+          <!-- El formulario se insertará aquí vía AJAX -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal flotante de VER MÁS -->
+    <div id="modalVerMas" class="modal">
+      <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModalVerMas()">&times;</span>
+        <div id="contenidoVerMas">
+          <!-- Aquí se cargará el HTML con la información del profesor -->
+        </div>
+      </div>
+    </div>
+
+
+
+    <script>
+
+      document.getElementById('formAgregarProfesor').addEventListener('submit', function(e) {
+      // Validar edad >= 18 años
+      const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+      const fechaNacimiento = new Date(fechaNacimientoInput.value);
+      const hoy = new Date();
+      const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+      const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+      const dia = hoy.getDate() - fechaNacimiento.getDate();
+
+      if (isNaN(fechaNacimiento.getTime())) {
+        alert("Por favor, ingresa una fecha de nacimiento válida.");
+        e.preventDefault();
+        return;
+      }
+
+      // Ajustar edad si no ha cumplido años este año
+      if (mes < 0 || (mes === 0 && dia < 0)) {
+        edad--;
+      }
+
+      if (edad < 18) {
+        alert("El profesor debe ser mayor o igual a 18 años.");
+        e.preventDefault();
+        fechaNacimientoInput.focus();
+        return;
+      }
+    });
+
+      document.addEventListener('DOMContentLoaded', function () {
+
+
+          // Botón Agregar
+          document.querySelector('.btn-agregar').addEventListener('click', function () {
+              console.log("abrirModal ejecutado");
+              document.getElementById("modalProfesor").style.display = "block";
+          });
+
+          // Botones Editar
+          document.querySelectorAll('.btn-editar').forEach(function (btn) {
+              btn.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const profesorId = btn.dataset.id;
+                  abrirModalEditar(profesorId);
+              });
+          });
+
+          // Modal cerrar al hacer clic afuera
+          window.onclick = function(event) {
+              const modalAgregar = document.getElementById("modalProfesor");
+              const modalEditar = document.getElementById("modalEditarProfesor");
+
+              if (event.target === modalAgregar) {
+                cerrarModal();
+              }
+              if (event.target === modalEditar) {
+                cerrarModalEditar();
+              }
+          };
+
+          // Delegación de envío del formulario de edición
+          document.addEventListener('submit', function(e) {
+              if (e.target.id === 'formEditarProfesor') {
+                  e.preventDefault();
+                  const form = e.target;
+                  const formData = new FormData(form);
+                  fetch(form.action, {
+                      method: 'POST',
+                      body: formData,
+                  }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            cerrarModalEditar();
+                            localStorage.setItem('mensaje_exito', 'Profesor actualizado correctamente');
+                            window.location.href = data.redirect_url;
+                        }
+                    });
+              }
+          });
+      });
+
+      function abrirModalEditar(profesorId) {
+          // Asegura que el modal de agregar esté cerrado
+          cerrarModal();
+          cerrarModalVerMas();
+
+          fetch(`/gestion/profesores/editar/${profesorId}/`)
+            .then(response => response.text())
+            .then(html => {
+              document.getElementById("formEditarProfesorCargado").innerHTML = html;
+              document.getElementById("modalEditarProfesor").style.display = "block";
+            });
+      }
+
+      function cerrarModal() {
+          console.log("cerrarModal ejecutado");
+          document.getElementById("modalProfesor").style.display = "none";
+      }
+
+      function cerrarModalEditar() {
+          console.log("cerrarModalEditar ejecutado");
+          document.getElementById("modalEditarProfesor").style.display = "none";
+      }
+
+      // Escucha clic en todos los botones 'Ver más'
+      document.querySelectorAll('.vermas').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+              const profesorId = this.closest('tr').querySelector('.btn-editar').dataset.id;
+              abrirModalVerMas(profesorId);
+          });
+      });
+
+      function abrirModalVerMas(id) {
+          fetch(`/gestion/profesores/ver/${id}/`)
+              .then(response => response.text())
+              .then(html => {
+                  document.getElementById("contenidoVerMas").innerHTML = html;
+                  document.getElementById("modalVerMas").style.display = "block";
+              });
+      }
+
+      function cerrarModalVerMas() {
+          document.getElementById("modalVerMas").style.display = "none";
+      }
+
+
+    </script>
+
+</body>
+</html>

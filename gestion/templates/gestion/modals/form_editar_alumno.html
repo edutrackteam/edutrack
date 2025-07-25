@@ -1,0 +1,217 @@
+<div id="modalEditarAlumno" class="modal">
+
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarModalEditarAlumno()">&times;</span>
+    <form id="formEditarAlumno" method="post" action="{% url 'editar_alumno' alumno.id %}" class="form-modal">
+      {% csrf_token %}
+      <h2>Editar alumno</h2>
+
+      <!-- Datos personales -->
+      <h4>Datos personales</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" name="nombre" value="{{ alumno.nombre_completo }}" required
+            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+            title="Solo se permiten letras y espacios">
+        </div>
+        <div class="form-group">
+          <label>CURP</label>
+          <input type="text" name="curp" value="{{ alumno.curp }}" required
+            pattern="[A-Z0-9]{18}" maxlength="18" minlength="18"
+            title="Debe contener exactamente 18 caracteres en mayúsculas y números"
+            oninput="this.value = this.value.toUpperCase();">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha de nacimiento</label>
+          <input type="date" name="fecha_nacimiento" id="fechaNacimientoAlumno"
+            value="{{ alumno.fecha_nacimiento|date:'Y-m-d' }}" required>
+        </div>
+        <div class="form-group">
+          <label>Sexo</label>
+          <select name="sexo" required>
+            <option value="">Selecciona</option>
+            <option value="M" {% if alumno.sexo == 'M' %}selected{% endif %}>Masculino</option>
+            <option value="F" {% if alumno.sexo == 'F' %}selected{% endif %}>Femenino</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Datos del tutor -->
+      <h4>Datos del tutor</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" name="nombre_tutor" value="{{ alumno.tutor_nombre }}"
+            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo se permiten letras y espacios">
+        </div>
+        <div class="form-group">
+          <label>Teléfono celular</label>
+          <input type="tel" name="telefono" value="{{ alumno.tutor_telefono }}"
+            pattern="\d{10}" maxlength="10" minlength="10"
+            title="Debe contener exactamente 10 dígitos">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="width: 100%;">
+          <label>CURP</label>
+          <input type="text" name="curp_tutor" value="{{ alumno.tutor_curp }}"
+            pattern="[A-Z0-9]{18}" maxlength="18" minlength="18"
+            title="Debe contener exactamente 18 caracteres en mayúsculas y números"
+            oninput="this.value = this.value.toUpperCase();">
+        </div>
+      </div>
+
+      <!-- Grupo -->
+      <div class="form-row">
+        <div class="form-group" style="width: 100%;">
+          <label>Grupo</label>
+          <select name="grupo" required>
+            {% for grupo in grupos %}
+              <option value="{{ grupo.id }}" {% if alumno.grupo.id == grupo.id %}selected{% endif %}>{{ grupo }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="form-actions">
+        <button type="button" onclick="cerrarModalEditarAlumno()" class="btn-cancelar">Cancelar</button>
+        <button type="submit" class="btn-guardar">Editar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById("formEditarAlumno").addEventListener("submit", function (e) {
+    const fechaInput = document.getElementById("fechaNacimientoAlumno");
+    const fecha = new Date(fechaInput.value);
+    const hoy = new Date();
+
+    if (isNaN(fecha.getTime())) {
+      alert("Fecha de nacimiento no válida.");
+      fechaInput.focus();
+      e.preventDefault();
+      return;
+    }
+
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const m = hoy.getMonth() - fecha.getMonth();
+    const d = hoy.getDate() - fecha.getDate();
+
+    if (m < 0 || (m === 0 && d < 0)) edad--;
+
+    if (edad < 10) {
+      alert("El alumno debe tener al menos 10 años.");
+      fechaInput.focus();
+      e.preventDefault();
+    }
+  });
+</script>
+
+<style>
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-contenido {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 40px;
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    max-height: 95vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .cerrar {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+  }
+
+  .form-modal h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+
+  .form-modal h4 {
+    margin-top: 25px;
+    font-size: 16px;
+    color: #34495e;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+  }
+
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn-cancelar,
+  .btn-guardar {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-cancelar {
+    background-color: #ecf0f1;
+    color: #333;
+  }
+
+  .btn-guardar {
+    background-color: #2c3e50;
+    color: white;
+  }
+</style>

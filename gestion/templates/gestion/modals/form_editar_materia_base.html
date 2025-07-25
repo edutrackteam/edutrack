@@ -1,0 +1,104 @@
+<form id="formEditarMateriaBase" method="post" class="form-modal">
+  {% csrf_token %}
+  <h3>Editar nombre de la materia</h3>
+
+  <div class="form-group">
+    <label for="nombre">Nuevo nombre</label>
+    <input type="text" name="nombre" id="nombre" value="{{ materia_base.nombre }}" required maxlength="100" />
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn-cancelar" onclick="cerrarModalEditar()">Cancelar</button>
+    <button type="submit" class="btn-agregar-modal">Guardar</button>
+  </div>
+</form>
+
+<style>
+  /* Estilos locales para que luzca igual que el modal principal */
+
+  .form-modal {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #2c3e50;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #3f5d6b;
+    box-shadow: 0 0 5px #3f5d6b;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .btn-cancelar,
+  .btn-agregar-modal {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  .btn-cancelar {
+    background-color: #ecf0f1;
+    color: #333;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-cancelar:hover {
+    background-color: #d0d7db;
+  }
+
+  .btn-agregar-modal {
+    background-color: #3f5d6b;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-agregar-modal:hover {
+    background-color: #2e4550;
+  }
+</style>
+
+<script>
+document.getElementById('formEditarMateriaBase').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  fetch(window.location.href, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      location.reload(); // recarga para ver cambios
+    } else {
+      alert(data.error || "Ocurrió un error.");
+    }
+  })
+  .catch(() => alert("Error de conexión."));
+});
+</script>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Panel Directivos{% endblock %}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6f8fa;
+      color: #333;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background-color: #3f5d6b;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 40px 25px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 3px 0 8px rgba(0,0,0,0.1);
+      transition: width 0.3s ease;
+    }
+
+    .sidebar h3 {
+      margin: 0 0 30px 0;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      margin: 12px 0;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0px 6px;
+      border-radius: 6px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .sidebar a:hover,
+    .sidebar a:focus {
+      background-color: #315061;
+      text-decoration: none;
+      outline: none;
+    }
+    .sidebar a.logout {
+      margin-top: auto;
+      color: #ddd;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 6px;
+    }
+    .sidebar a.logout:hover,
+    .sidebar a.logout:focus {
+      background-color: #2a4150;
+      color: #fff;
+    }
+
+    /* Contenido principal */
+    .contenido {
+      margin-left: 240px;
+      padding: 40px 50px;
+      min-height: 100vh;
+      background-color: white;
+      box-shadow: inset 0 0 20px #f0f0f0;
+      border-radius: 0 20px 20px 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Panel tarjeta */
+    .card-panel {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Menú principal">
+    <h3>Panel Directivos</h3>
+    <a href="#" tabindex="1">Inicio</a>
+    <a href="{% url 'lista_profesores' %}" tabindex="2">Profesores</a>
+    <a href="{% url 'lista_grupos' %}" tabindex="3">Grados y Grupos</a>
+    <a href="{% url 'lista_alumnos' %}" tabindex="4">Alumnos</a>
+    <a href="{% url 'lista_materias' %}" tabindex="5">Materias</a>
+    <a href="{% url 'logout' %}" class="logout" tabindex="6">Cerrar sesión</a>
+  </nav>
+
+</body>
+</html>

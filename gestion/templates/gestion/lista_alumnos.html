@@ -1,0 +1,390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumnos</title>
+    <style>
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        .table-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn-agregar {
+            padding: 10px 20px;
+            background-color: #3f5d6b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-contenido {
+            background: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 60%;
+            max-width: 800px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .cerrar {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        h2 {
+            color: #3f5d6b;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .form-actions {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .btn-cancelar, .btn-guardar {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-cancelar {
+            background-color: #ccc;
+            color: #333;
+            margin-right: 10px;
+        }
+        .btn-guardar {
+            background-color: #3f5d6b;
+            color: white;
+        }
+        .btn-calificaciones {
+            background: #f5c26b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+            margin-right: 6px;
+        }
+        .btn-editar {
+            background: #a3e6a3;
+            border: none;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 12px;
+            margin-right: 6px;
+        }
+        .btn-eliminar {
+            background: #e89a9a;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 12px;
+        }
+                .messages {
+          margin-bottom: 20px;
+        }
+
+        .alert {
+          padding: 15px 20px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          font-weight: bold;
+        }
+
+        .alert-success {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        .alert-error,
+        .alert-danger {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+
+        .alert-warning {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+
+        .alert-info {
+          background-color: #d1ecf1;
+          color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'gestion/partials/sidebar.html' %}
+
+    <div class="main-content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Alumnos</h2>
+                <button type="button" class="btn-agregar" onclick="abrirModal()">Agregar alumno</button>
+                <!-- <form method="post" enctype="multipart/form-data" action="{% url 'importar_alumnos_excel' %}">
+                    {% csrf_token %}
+                    <input type="file" name="archivo_excel" accept=".xlsx, .xls" required>
+                    <button type="submit" class="btn-agregar">📥 Importar Excel</button>
+                </form> -->
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Nombre</th>
+                        <th>CURP</th>
+                        <th>Grupo</th>
+                        <th>Tutor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alumno in alumnos %}
+                    <tr>
+                        <td>{{ forloop.counter|add:'0'|slice:"-2" }}</td>
+                        <td>{{ alumno.nombre_completo }}</td>
+                        <td>{{ alumno.curp }}</td>
+                        <td>{{ alumno.grupo }}</td>
+                        <td>{{ alumno.tutor_nombre }}</td>
+                        <td class="acciones">
+                            <a href="{% url 'ver_boleta_directivo' alumno.id %}" class="btn-calificaciones">Calificaciones</a>
+                            <button type="button" class="btn-editar" data-id="{{ alumno.id }}">✏️</button>
+                            <form method="post" action="{% url 'eliminar_alumno' alumno.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este alumno?')" class="btn-eliminar">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">No hay alumnos registrados.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modalAlumno" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <h2>Agregar alumno</h2>
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.non_field_errors }}
+
+                <h4>Datos personales</h4>
+                <div class="form-row">
+                    <div style="flex:1;">
+                    <label for="{{ form.nombre_completo.id_for_label }}">Nombre completo</label>
+                    {{ form.nombre_completo }}
+                    {% if form.nombre_completo.errors %}
+                        <div style="color: red;">{{ form.nombre_completo.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                    <div style="flex:1;">
+                    <label for="{{ form.curp.id_for_label }}">CURP</label>
+                    {{ form.curp }}
+                    {% if form.curp.errors %}
+                        <div style="color: red;">{{ form.curp.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div style="flex:1;">
+                    <label for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>
+                    {{ form.fecha_nacimiento }}
+                    {% if form.fecha_nacimiento.errors %}
+                        <div style="color: red;">{{ form.fecha_nacimiento.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                    <div style="flex:1;">
+                    <label for="{{ form.sexo.id_for_label }}">Sexo</label>
+                    {{ form.sexo }}
+                    {% if form.sexo.errors %}
+                        <div style="color: red;">{{ form.sexo.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                </div>
+
+                <h4>Datos del tutor</h4>
+                <div class="form-row">
+                    <div style="flex:1;">
+                    <label for="{{ form.tutor_nombre.id_for_label }}">Nombre del tutor</label>
+                    {{ form.tutor_nombre }}
+                    {% if form.tutor_nombre.errors %}
+                        <div style="color: red;">{{ form.tutor_nombre.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                    <div style="flex:1;">
+                    <label for="{{ form.tutor_telefono.id_for_label }}">Teléfono celular</label>
+                    {{ form.tutor_telefono }}
+                    {% if form.tutor_telefono.errors %}
+                        <div style="color: red;">{{ form.tutor_telefono.errors|striptags }}</div>
+                    {% endif %}
+                    </div>
+                </div>
+
+                <div style="margin-bottom:15px;">
+                    <label for="{{ form.tutor_curp.id_for_label }}">CURP del tutor</label>
+                    {{ form.tutor_curp }}
+                    {% if form.tutor_curp.errors %}
+                    <div style="color: red;">{{ form.tutor_curp.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <h4>Grupo</h4>
+                <div style="margin-bottom:15px;">
+                    <label for="{{ form.grupo.id_for_label }}">Grupo asignado</label>
+                    {{ form.grupo }}
+                    {% if form.grupo.errors %}
+                    <div style="color: red;">{{ form.grupo.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Agregar</button>
+                </div>
+                </form>
+
+        </div>
+    </div>
+
+    <!-- Modal de edición de alumno -->
+    <div id="modalEditarAlumno" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar" onclick="cerrarModalEditarAlumno()">&times;</span>
+        <div id="formEditarAlumnoCargado">
+        <!-- El contenido se cargará vía AJAX -->
+        </div>
+    </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById("modalAlumno").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalAlumno").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById("modalAlumno");
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        }
+
+        ///////
+        document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', function () {
+            const alumnoId = this.dataset.id;
+            abrirModalEditarAlumno(alumnoId);
+            });
+        });
+
+        document.addEventListener('submit', function(e) {
+            if (e.target.id === 'formEditarAlumno') {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                cerrarModalEditarAlumno();
+                location.reload();
+                }
+            });
+            }
+        });
+        });
+
+        function abrirModalEditarAlumno(alumnoId) {
+        cerrarModal();
+        fetch(`/gestion/alumnos/editar/${alumnoId}/`)
+            .then(res => res.text())
+            .then(html => {
+            document.getElementById("formEditarAlumnoCargado").innerHTML = html;
+            document.getElementById("modalEditarAlumno").style.display = "block";
+            });
+        }
+
+        function cerrarModalEditarAlumno() {
+        document.getElementById("modalEditarAlumno").style.display = "none";
+        }
+
+    </script>
+
+    <script>
+        // Abre modal automáticamente si hay errores en el formulario
+        document.addEventListener('DOMContentLoaded', function () {
+            {% if form.errors %}
+                abrirModal();
+            {% endif %}
+        });
+    </script>
+
+</body>
+</html>

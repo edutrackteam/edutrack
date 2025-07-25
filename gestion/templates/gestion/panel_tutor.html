@@ -1,0 +1,107 @@
+{% extends 'base_tutor.html' %}
+{% block content %}
+<style>
+    .contenedor {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+    }
+
+    .btn-principal {
+        background-color: #374b5c;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: bold;
+        float: right;
+    }
+
+    .tabla {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .tabla th, .tabla td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .tabla th {
+        font-weight: bold;
+    }
+
+    .btn-accion {
+        border: none;
+        padding: 8px 15px;
+        border-radius: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-vincular {
+        text-decoration: none;
+        background-color: #e1c17b;
+    }
+
+    .mensaje {
+        margin-top: 15px;
+        font-weight: bold;
+        color: green;
+    }
+
+    .formulario {
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="contenedor">
+    <h2>Bienvenido, {{ tutor.nombre }}</h2>
+
+    {% if mensaje %}
+        <p class="mensaje">{{ mensaje }}</p>
+    {% endif %}
+
+    <h3>Buscar y vincular alumno</h3>
+    <form method="post" class="formulario">
+        {% csrf_token %}
+        <label for="curp_alumno">CURP del alumno:</label>
+        <input type="text" id="curp_alumno" name="curp_alumno" maxlength="18" required>
+        <button type="submit" class="btn-principal">Buscar y vincular</button>
+    </form>
+
+    <h3>Alumnos vinculados</h3>
+    {% if alumnos %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Nombre</th>
+                <th>CURP</th>
+                <th>Grupo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alumno in alumnos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ alumno.nombre_completo }}</td>
+                <td>{{ alumno.curp }}</td>
+                <td>{{alumno.grupo}}</td>
+                <td>
+                    <a href="{% url 'ver_boleta_tutor' alumno.id %}" class="btn-accion btn-vincular">Calificaciones</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No tienes alumnos vinculados.</p>
+    {% endif %}
+</div>
+{% endblock %}

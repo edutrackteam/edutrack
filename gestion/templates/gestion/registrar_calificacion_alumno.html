@@ -1,0 +1,159 @@
+{% extends 'base_profesor.html' %}
+{% block title %}Registrar Calificación - {{ alumno.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="contenedor-formulario">
+  <div class="tarjeta">
+    <h2 class="titulo">Registrar Calificación</h2>
+    
+    <p><strong>Alumno:</strong> {{ alumno.nombre_completo }}</p>
+    <p><strong>Materia:</strong> {{ materia.nombre }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="campo">
+        <label for="trimestre">Trimestre:</label>
+        <select name="trimestre" id="trimestre" required>
+          <option value="">Selecciona un trimestre</option>
+          <option value="1">1° Trimestre</option>
+          <option value="2">2° Trimestre</option>
+          <option value="3">3° Trimestre</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="calificacion">Calificación (0-10):</label>
+        <input 
+          type="number" 
+          id="calificacion" 
+          name="calificacion" 
+          min="0" 
+          max="10" 
+          step="0.01" 
+          placeholder="Ej. 8.50" 
+          required
+        >
+      </div>
+
+      <div class="acciones">
+        <a href="{% url 'panel_profesor' %}" class="btn btn-cancelar">Cancelar</a>
+        <button type="submit" class="btn btn-guardar">Guardar</button>
+      </div>
+
+      {% if messages %}
+      <div class="mensajes">
+        {% for message in messages %}
+        <div class="alerta {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </form>
+
+    
+  </div>
+</div>
+
+<style>
+    .mensajes {
+        margin-top: 20px;
+    margin-bottom: 20px;
+    }
+
+    .alerta {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    }
+
+    .alerta.success {
+    background-color: #e6f4ea;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+    }
+
+    .alerta.error {
+    background-color: #fcebea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+    }
+
+
+    .contenedor-formulario {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+  .tarjeta {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .titulo {
+    font-size: 24px;
+    margin-bottom: 25px;
+    color: #2c3e50;
+    text-align: center;
+  }
+
+  .campo {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #34495e;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+  }
+
+  .acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .btn-cancelar {
+    background-color: #e0e0e0;
+    color: #2c3e50;
+    border: none;
+  }
+
+  .btn-cancelar:hover {
+    background-color: #d0d0d0;
+  }
+
+  .btn-guardar {
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+  }
+
+  .btn-guardar:hover {
+    background-color: #27696b;
+  }
+</style>
+{% endblock %}

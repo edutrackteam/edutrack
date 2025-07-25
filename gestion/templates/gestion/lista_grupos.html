@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Grupos</title>
+    <link rel="stylesheet" href="{% static 'gestion/estilos_dashboard.css' %}">
+    <style>
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .grupo-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .grupo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grupo-header h2 {
+            margin: 0;
+            color: #3f5d6b;
+        }
+
+        .btn-nuevo {
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #497a8d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .grilla-grupos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .tarjeta-grupo {
+            background-color: #f7f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .tarjeta-grupo h3 {
+            margin: 0 0 10px;
+            color: #2c3e50;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-contenido {
+            background-color: white;
+            margin: 8% auto;
+            padding: 25px 40px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .cerrar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .formulario-grupo input, .formulario-grupo select {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .acciones-formulario {
+            text-align: right;
+        }
+
+        .btn-cancelar, .btn-agregar-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancelar {
+            background-color: #ccc;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .btn-agregar-modal {
+            background-color: #3f5d6b;
+            color: white;
+        }
+        .messages {
+          margin-bottom: 20px;
+        }
+
+        .alert {
+          padding: 15px 20px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          font-weight: bold;
+        }
+
+        .alert-success {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        .alert-error,
+        .alert-danger {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+
+        .alert-warning {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+
+        .alert-info {
+          background-color: #d1ecf1;
+          color: #0c5460;
+        }
+
+    </style>
+</head>
+<body>
+
+    {% include 'gestion/partials/sidebar.html' %}
+
+    <div class="main-content">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="grupo-container">
+            <div class="grupo-header">
+                <h2>Grupos</h2>
+                <button class="btn-nuevo" onclick="abrirModal()">+ Nuevo grupo</button>
+            </div>
+
+            <div class="grilla-grupos">
+                {% for grupo in grupos %}
+                <div class="tarjeta-grupo">
+                    <h3>Grado/Grupo: {{ grupo }}</h3>
+                    <p>Ciclo escolar: {{ grupo.ciclo_escolar }}</p>
+                    <a href="{% url 'ver_alumnos_grupo' grupo.id %}" class="btn-nuevo">Ver alumnos</a>
+                </div>
+                {% empty %}
+                <p>No hay grupos registrados.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div id="modalGrupo" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar" onclick="cerrarModal()">&times;</span>
+            <h2>Nuevo grupo</h2>
+
+                {% if form.errors %}
+                <div class="alert-error">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p><strong>{{ field.label }}:</strong> {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+            <form method="post" class="formulario-grupo">
+                {% csrf_token %}
+                <label>Grado:</label>
+                <select name="grado" required>
+                    <option value="">Selecciona</option>
+                    <option value="1" {% if form.grado.value == "1" %}selected{% endif %}>1°</option>
+                    <option value="2" {% if form.grado.value == "2" %}selected{% endif %}>2°</option>
+                    <option value="3" {% if form.grado.value == "3" %}selected{% endif %}>3°</option>
+                </select>
+
+                <label>Sección:</label>
+                <select name="seccion" required>
+                    <option value="">Selecciona</option>
+                    <option value="A" {% if form.seccion.value == "A" %}selected{% endif %}>A</option>
+                    <option value="B" {% if form.seccion.value == "B" %}selected{% endif %}>B</option>
+                    <option value="C" {% if form.seccion.value == "C" %}selected{% endif %}>C</option>
+                </select>
+
+                <label>Ciclo escolar:</label>
+                <input type="text" name="ciclo_escolar" placeholder="Ej. 2025-2026" value="{{ form.ciclo_escolar.value }}" required>
+
+                <div class="acciones-formulario">
+                    <button type="button" onclick="cerrarModal()" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-agregar-modal">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById("modalGrupo").style.display = "block";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalGrupo").style.display = "none";
+        }
+
+        // Cerrar modal si se da clic fuera del contenido
+        window.onclick = function(event) {
+            var modal = document.getElementById("modalGrupo");
+            if (event.target == modal) {
+                cerrarModal();
+            }
+        }
+    </script>
+
+    {% if form.errors %}
+    <script>
+        // Abrir modal si hay errores en el formulario al cargar la página
+        document.addEventListener('DOMContentLoaded', function () {
+            abrirModal();
+        });
+    </script>
+    {% endif %}
+
+</body>
+</html>

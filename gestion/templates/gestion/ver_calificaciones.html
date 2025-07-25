@@ -1,0 +1,102 @@
+{% extends "base_profesor.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Grupo {{ grupo.grado }}°{{ grupo.seccion }}</h2>
+
+<!-- <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+  <div>
+    <input type="text" placeholder="Buscar alumno..." class="input-busqueda">
+    <button class="boton-buscar">Search</button>
+  </div>
+</div> -->
+
+<div class="tabla-alumnos">
+  <table>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Nombre completo</th>
+        <th>CURP</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for alumno in alumnos %}
+      <tr>
+        <td>{{ forloop.counter|stringformat:"02d" }}</td>
+        <td>{{ alumno.nombre_completo }}</td>
+        <td>{{ alumno.curp }}</td>
+        <td>
+          <a href="{% url 'ver_boleta' alumno.id %}" class="btn-calificaciones">Calificaciones</a>
+          <a href="{% url 'panel_profesor' %}" class="btn-editar">✏️</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+.tabla-alumnos table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tabla-alumnos th, .tabla-alumnos td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabla-alumnos th {
+  background-color: #f9f9f9;
+  color: #555;
+}
+
+.btn-calificaciones {
+  background: #f5c26b;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  margin-right: 6px;
+}
+
+.btn-editar {
+  background: #a3e6a3;
+  border: none;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 12px;
+  margin-right: 6px;
+}
+
+.boton-agregar {
+  background-color: #7da6bb;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+}
+
+.input-busqueda {
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+.boton-buscar {
+  background-color: #3f5563;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+}
+</style>
+{% endblock %}

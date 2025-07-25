@@ -1,0 +1,98 @@
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f2f4f8;
+        margin: 0;
+        padding: 0;
+    }
+
+    .home-container {
+        background: white;
+        border-radius: 20px;
+        max-width: 700px;
+        margin: 80px auto;
+        padding: 50px 40px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .home-title {
+        font-size: 36px;
+        color: #374b5c;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .home-subtitle {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-weight: bold;
+        color: #374b5c;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .btn-row {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+    }
+
+    .btn-home {
+        background-color: #374b5c;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 15px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        min-width: 220px;
+        text-align: center;
+    }
+
+    .btn-home:hover {
+        background-color: #2b3e4c;
+    }
+
+    .btn-secundario {
+        background-color: #e1c17b;
+        color: #222;
+    }
+
+    .btn-secundario:hover {
+        background-color: #d1b069;
+    }
+
+    .footer-info {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #aaa;
+    }
+</style>
+
+<div class="home-container">
+    <h1 class="home-title">Bienvenido a Telesecundaria No. 51</h1>
+    <p class="home-subtitle">Una plataforma para padres, profesores y directivos de telesecundaria</p>
+
+    <div class="seccion">
+        <h3>Iniciar sesión</h3>
+        <a href="{% url 'login' %}" class="btn-home">Como Tutor</a>
+        <a href="{% url 'login_admin' %}" class="btn-home">Como Profesor o Directivo</a>
+    </div>
+
+    <div class="seccion">
+        <h3>Registrarse</h3>
+        <a href="{% url 'registro_tutor' %}" class="btn-home btn-secundario">Registrar cuenta de Tutor</a>
+        <a href="{% url 'registro_admin' %}" class="btn-home btn-secundario">Registrar cuenta de Directivo</a>
+    </div>
+
+    <div class="footer-info">
+        <p>&copy; 2025 Telesecundarian No. 51. Todos los derechos reservados.</p>
+    </div>
+</div>
