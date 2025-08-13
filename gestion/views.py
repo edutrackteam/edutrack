@@ -30,7 +30,7 @@ def lista_profesores(request):
         curp = request.POST['curp']
         rol_profesor = Rol.objects.get(nombre='Profesor')
 
-        # Crear usuario.
+        # Crear usuario
         usuario = Usuario.objects.create(
             nombre=nombre,
             apellido_paterno=apellido_paterno,

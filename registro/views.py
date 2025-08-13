@@ -63,7 +63,7 @@ def login_view(request):
                 else:
                     messages.error(request, "Contraseña incorrecta")
             except Usuario.DoesNotExist:
-                messages.error(request, "Correo no registrado")
+                messages.error(request, "Corro no registrado")
     else:
         form = LoginForm()
     
