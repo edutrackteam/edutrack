@@ -71,6 +71,8 @@
   <div class="boleta-header">Boleta de Calificaciones</div>
 
   <div class="boleta-info">
+    <p><strong>Telesecundaria No. 51</strong></p>
+    <p><strong>CCT: </strong>13DTV0407P</p>
     <p><strong>Alumno:</strong> {{ alumno.nombre_completo }} </p>
     <p><strong>Grado y Grupo:</strong> {{ alumno.grupo.grado }}° {{ alumno.grupo.seccion }}</p>
     <p><strong>Ciclo Escolar:</strong> {{ alumno.grupo.ciclo_escolar }}</p>
@@ -99,6 +101,13 @@
       </tr>
       {% endfor %}
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" style="text-align: right;"><strong>Promedio General:</strong></td>
+        <td class="promedio">{{ promedio_general }}</td>
+      </tr>
+    </tfoot>
+
   </table>
 </div>
 

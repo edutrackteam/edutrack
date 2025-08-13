@@ -1,4 +1,4 @@
-<form id="formEditarMateriaBase" method="post" class="form-modal">
+<form id="formEditarMateriaBase" method="post" class="form-modal" data-url="{% url 'editar_materia_base' materia_base.id %}">
   {% csrf_token %}
   <h3>Editar nombre de la materia</h3>
 
@@ -83,22 +83,36 @@
   }
 </style>
 
+
 <script>
-document.getElementById('formEditarMateriaBase').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const formData = new FormData(this);
-  fetch(window.location.href, {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      location.reload(); // recarga para ver cambios
-    } else {
-      alert(data.error || "Ocurrió un error.");
-    }
-  })
-  .catch(() => alert("Error de conexión."));
-});
+function agregarListenerEditarMateria() {
+  const form = document.getElementById('formEditarMateriaBase');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const url = form.dataset.url;
+      const formData = new FormData(form);
+
+      fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          cerrarModalEditar();
+          location.reload();
+        } else {
+          alert(data.error || 'Error al guardar');
+        }
+      })
+      .catch(() => alert('Error de conexión'));
+    });
+  }
+}
 </script>
+
+

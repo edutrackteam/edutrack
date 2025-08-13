@@ -91,7 +91,8 @@
 <body>
 
     <h1>Boleta de Calificaciones</h1>
-    <h2>Telesecundaria · Ciclo Escolar {{ alumno.grupo.ciclo_escolar }}</h2>
+    <h2>Telesecundaria · Ciclo Escolar {{ alumno.grupo.ciclo_escolar }} </h2>
+    <h3><center><strong>CCT: </strong>13DTV0407P</center></h3>
 
     <div class="alumno-info">
         <div><strong>Alumno:</strong> {{ alumno.nombre_completo }}</div>
@@ -122,6 +123,12 @@
             </tr>
         {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" style="text-align: right;"><strong>Promedio General:</strong></td>
+                <td class="promedio">{{ promedio_general }}</td>
+            </tr>
+        </tfoot>
     </table>
 
     <div class="footer">

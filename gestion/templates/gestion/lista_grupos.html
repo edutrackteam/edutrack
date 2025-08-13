@@ -148,6 +148,89 @@
           color: #0c5460;
         }
 
+        /* Responsive para main content y sidebar */
+        @media (max-width: 900px) {
+        .main-content {
+            margin-left: 0;
+            padding: 20px 15px;
+        }
+
+        .grupo-container {
+            padding: 15px;
+        }
+
+        .grupo-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .btn-nuevo {
+            width: 100%;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 16px;
+        }
+        }
+
+        /* Tarjetas de grupos para pantallas pequeñas */
+        @media (max-width: 600px) {
+        .grilla-grupos {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .tarjeta-grupo h3 {
+            font-size: 18px;
+        }
+
+        .tarjeta-grupo p {
+            font-size: 14px;
+        }
+
+        .tarjeta-grupo .btn-nuevo {
+            display: block;
+            width: 100%;
+            padding: 10px 0;
+            font-size: 15px;
+        }
+        }
+
+        /* Modal responsive */
+        @media (max-width: 500px) {
+        .modal-contenido {
+            width: 90vw;
+            margin: 15% auto;
+            padding: 20px;
+        }
+
+        .cerrar {
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+        }
+
+        .formulario-grupo input,
+        .formulario-grupo select {
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        .btn-cancelar,
+        .btn-agregar-modal {
+            width: 100%;
+            padding: 12px 0;
+            font-size: 16px;
+        }
+
+        .acciones-formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+        }
+
     </style>
 </head>
 <body>

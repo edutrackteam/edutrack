@@ -64,6 +64,53 @@
     font-weight: bold;
     color: #2563eb;
   }
+
+  @media (max-width: 900px) {
+  .boleta-container {
+    margin-left: 0;
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .boleta-info {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .boleta-info p,
+  .boleta-info a.btn {
+    flex: 1 1 100%;
+  }
+
+  .boleta-info a.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #3f5d6b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    width: fit-content;
+  }
+}
+
+@media (max-width: 600px) {
+  .boleta-table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .boleta-table th,
+  .boleta-table td {
+    padding: 8px 10px;
+  }
+}
+
 </style>
 
 <div class="boleta-container">
@@ -98,6 +145,13 @@
       </tr>
       {% endfor %}
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" style="text-align: right;"><strong>Promedio General:</strong></td>
+        <td class="promedio">{{ promedio_general }}</td>
+      </tr>
+    </tfoot>
+
   </table>
 </div>
 

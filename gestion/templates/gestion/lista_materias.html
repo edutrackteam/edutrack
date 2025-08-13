@@ -228,6 +228,41 @@
     background-color: #d1ecf1;
     color: #0c5460;
   }
+  @media (max-width: 1024px) {
+  .contenedor {
+    margin-left: 0;
+    padding: 20px 15px;
+  }
+
+  .contenedor-tarjetas {
+    justify-content: center;
+  }
+
+  .tarjeta {
+    width: 45%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tarjeta {
+    width: 100%;
+  }
+
+  .btn-editar {
+    position: static;
+    display: block;
+    margin-top: 15px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .modal-contenido {
+    width: 95%;
+    padding: 20px;
+  }
+}
+
 </style>
 
 <script>
@@ -260,6 +295,7 @@
       .then(html => {
         document.getElementById('contenidoEditarMateria').innerHTML = html;
         document.getElementById('modalEditarMateria').style.display = 'flex';
+        agregarListenerEditarMateria();
       });
   }
 

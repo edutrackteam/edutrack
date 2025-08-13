@@ -6,168 +6,245 @@
     <title>Profesores</title>
     <link rel="stylesheet" href="{% static 'gestion/estilos_dashboard.css' %}">
     <style>
-        .main-content {
-            margin-left: 250px;
-            padding: 30px;
-        }
-        .table-container {
-            background-color: #fff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .table-header h2 {
-            margin: 0;
-            color: #3f5d6b;
-        }
-        .btn-agregar {
-            padding: 10px 20px;
-            background-color: #6c8797;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            color: #6b7c88;
-            font-weight: bold;
-        }
-        .acciones button {
-            margin-right: 5px;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .vermas { background-color: #fdd998; color: #6b4f1d; }
-        .editar { background-color: #c7f7cc; color: #1e5631; }
-        .eliminar { background-color: #f7c8c8; color: #7d1d1d; }
+            /* Base */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6f8fa;
+      color: #333;
+    }
 
-        .modal {
-          display: none;
-          position: fixed;
-          z-index: 10;
-          left: 0; top: 0;
-          width: 100%; height: 100%;
-          overflow: auto;
-          background-color: rgba(0,0,0,0.4);
-        }
+    /* El sidebar debe ser igual que en la plantilla principal, asegurando que esté fijo */
+    /* Si usas plantilla extendida con sidebar fijo, no repetirlo aquí */
 
-        .modal-contenido {
-          background-color: #fff;
-          margin: 5% auto;
-          padding: 25px 40px;
-          border-radius: 12px;
-          width: 60%;
-          box-shadow: 0 0 10px rgba(0,0,0,0.3);
-          position: relative;
-        }
+    /* Ajuste para main-content para que no quede debajo del sidebar */
+    .main-content {
+      margin-left: 240px; /* igual ancho sidebar */
+      padding: 30px;
+      min-height: 100vh;
+      background-color: white;
+      box-shadow: inset 0 0 20px #f0f0f0;
+      border-radius: 0 20px 20px 0;
+      transition: margin-left 0.3s ease;
+    }
 
-        .cerrar {
-          position: absolute;
-          top: 15px;
-          right: 25px;
-          font-size: 24px;
-          color: #666;
-          cursor: pointer;
-        }
+    .table-container {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
-        h2, h4 {
-          color: #3f5d6b;
-          margin-bottom: 15px;
-        }
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-        .form-row {
-          display: flex;
-          gap: 15px;
-          margin-bottom: 15px;
-        }
+    .table-header h2 {
+      margin: 0;
+      color: #3f5d6b;
+    }
 
-        input, select {
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          flex: 1;
-        }
+    .btn-agregar {
+      padding: 10px 20px;
+      background-color: #6c8797;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-        .input-full {
-          width: 100%;
-          margin-bottom: 15px;
-        }
+    .btn-agregar:hover {
+      background-color: #55707a;
+    }
 
-        .form-actions {
-          text-align: right;
-          margin-top: 20px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-        .btn-cancelar, .btn-agregar-modal {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          font-weight: bold;
-          cursor: pointer;
-        }
+    th, td {
+      padding: 10px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
 
-        .btn-cancelar {
-          background-color: #ccc;
-          color: #333;
-          margin-right: 10px;
-        }
+    th {
+      color: #6b7c88;
+      font-weight: bold;
+    }
 
-        .btn-agregar-modal {
-          background-color: #3f5d6b;
-          color: white;
-        }
+    .acciones button {
+      margin-right: 5px;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-        #modalProfesor {
-          z-index: 10;
-        }
+    .vermas { background-color: #fdd998; color: #6b4f1d; }
+    .vermas:hover { background-color: #e4c36f; }
 
-        #modalEditarProfesor {
-          z-index: 20;
-        }
-        .messages {
-          margin-bottom: 20px;
-        }
-        .alert {
-          padding: 15px 20px;
-          border-radius: 8px;
-          margin-bottom: 10px;
-          font-weight: bold;
-        }
-        .alert-success {
-          background-color: #d4edda;
-          color: #155724;
-        }
-        .alert-error,
-        .alert-danger {
-          background-color: #f8d7da;
-          color: #721c24;
-        }
-        .alert-warning {
-          background-color: #fff3cd;
-          color: #856404;
-        }
-        .alert-info {
-          background-color: #d1ecf1;
-          color: #0c5460;
-        }
-    </style>
+    .editar { background-color: #c7f7cc; color: #1e5631; }
+    .editar:hover { background-color: #a5e9a2; }
+
+    .eliminar { background-color: #f7c8c8; color: #7d1d1d; }
+    .eliminar:hover { background-color: #e99b9b; }
+
+    /* Modales y formularios (igual que antes, solo lo incluyo para referencia) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-contenido {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 25px 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .cerrar {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    h2, h4 {
+      color: #3f5d6b;
+      margin-bottom: 15px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      flex: 1 1 150px;
+      min-width: 120px;
+    }
+
+    .input-full {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .form-actions {
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .btn-cancelar, .btn-agregar-modal {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-cancelar {
+      background-color: #ccc;
+      color: #333;
+      margin-right: 10px;
+    }
+
+    .btn-cancelar:hover {
+      background-color: #bbb;
+    }
+
+    .btn-agregar-modal {
+      background-color: #3f5d6b;
+      color: white;
+    }
+
+    .btn-agregar-modal:hover {
+      background-color: #2d4452;
+    }
+
+    /* Mensajes */
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .alert-error,
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .alert-info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+
+    /* Responsividad */
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        padding: 15px 10px;
+        border-radius: 0;
+      }
+
+      .form-row {
+        flex-direction: column;
+      }
+
+      input, select {
+        min-width: 100%;
+      }
+
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .btn-agregar {
+        width: 100%;
+        padding: 12px 0;
+      }
+    }
+  </style>
 </head>
 <body>
     {% include 'gestion/partials/sidebar.html' %}  {# Menú lateral #}

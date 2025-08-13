@@ -6,7 +6,10 @@
     <title>Inicio de Sesión</title>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+        }
+
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
@@ -18,10 +21,11 @@
             height: 100vh;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         .login-box {
             display: flex;
-            width: 900px;
+            width:750px;
             background-color: white;
             border-radius: 20px;
             overflow: hidden;
@@ -33,33 +37,36 @@
         }
         .login-right {
             width: 50%;
-            padding: 60px;
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
         h2 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             color: #37474f;
         }
         p {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 14px;
             color: #666;
         }
         input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #e0aa5c;
             border-radius: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
         button {
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
         }
         .btn-login {
             background-color: #4d6c7a;
@@ -71,13 +78,12 @@
             color: white;
         }
         .forgot {
-            margin-top: 20px;
-            font-size: 14px;
+            margin-top: 15px;
+            font-size: 13px;
             text-align: center;
         }
         .forgot a {
             color: #37474f;
-            font-weight: bold;
             text-decoration: none;
         }
         .messages {
@@ -87,6 +93,7 @@
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 5px;
+            font-size: 14px;
         }
         .messages .error {
             background-color: #f8d7da;
@@ -99,19 +106,35 @@
         .g-recaptcha {
             margin: 10px 0 20px;
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-box {
+                flex-direction: column;
+                width: 90%;
+            }
+            .login-left {
+                width: 100%;
+                height: 120px;
+            }
+            .login-right {
+                width: 100%;
+                padding: 30px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-box">
             <div class="login-left">
-                <!-- Puedes poner una imagen de fondo aquí -->
+                <!-- Imagen o fondo opcional -->
             </div>
             <div class="login-right">
-                <img src="{% static '/registro/logo.png' %}" alt="Logo" style="width: 50px; margin-bottom: 20px;">
+                <img src="{% static '/registro/logo.png' %}" alt="Logo" style="width: 50px; margin-bottom: 15px;">
                 <h2>Inicio de sesión Padres de Familia</h2>
                 <p>Bienvenidos al Sistema Web de Seguimiento Académico</p>
-                <hr style="margin-bottom: 20px;">
+                <hr style="margin-bottom: 15px;">
 
                 {% if messages %}
                     <div class="messages">

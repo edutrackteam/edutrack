@@ -104,4 +104,37 @@
   .btn-volver:hover {
     background-color: #2f4755;
   }
+
+  @media (max-width: 900px) {
+  .contenido-principal {
+    margin-left: 0;  /* elimina el margen lateral para móviles */
+    padding: 20px 15px;
+  }
+
+  .titulo-seccion {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tabla-contenedor {
+    overflow-x: auto; /* ya lo tienes pero aseguramos */
+  }
+
+  .tabla-alumnos th,
+  .tabla-alumnos td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .btn-volver {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 16px;
+  }
+}
+
 </style>

@@ -4,12 +4,14 @@
 {% block content %}
 <h2>Grupo {{ grupo.grado }}°{{ grupo.seccion }}</h2>
 
-<!-- <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+<!--
+<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
   <div>
     <input type="text" placeholder="Buscar alumno..." class="input-busqueda">
     <button class="boton-buscar">Search</button>
   </div>
-</div> -->
+</div>
+-->
 
 <div class="tabla-alumnos">
   <table>
@@ -24,10 +26,10 @@
     <tbody>
       {% for alumno in alumnos %}
       <tr>
-        <td>{{ forloop.counter|stringformat:"02d" }}</td>
-        <td>{{ alumno.nombre_completo }}</td>
-        <td>{{ alumno.curp }}</td>
-        <td>
+        <td data-label="No.">{{ forloop.counter|stringformat:"02d" }}</td>
+        <td data-label="Nombre completo">{{ alumno.nombre_completo }}</td>
+        <td data-label="CURP">{{ alumno.curp }}</td>
+        <td data-label="Acciones">
           <a href="{% url 'ver_boleta' alumno.id %}" class="btn-calificaciones">Calificaciones</a>
           <a href="{% url 'panel_profesor' %}" class="btn-editar">✏️</a>
         </td>
@@ -66,6 +68,7 @@
   color: #333;
   text-decoration: none;
   margin-right: 6px;
+  display: inline-block;
 }
 
 .btn-editar {
@@ -75,28 +78,59 @@
   padding: 6px 10px;
   border-radius: 12px;
   margin-right: 6px;
+  display: inline-block;
 }
 
-.boton-agregar {
-  background-color: #7da6bb;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  text-decoration: none;
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .tabla-alumnos table, 
+  .tabla-alumnos thead, 
+  .tabla-alumnos tbody, 
+  .tabla-alumnos th, 
+  .tabla-alumnos td, 
+  .tabla-alumnos tr {
+    display: block;
+  }
 
-.input-busqueda {
-  padding: 6px 10px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-}
+  .tabla-alumnos thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
 
-.boton-buscar {
-  background-color: #3f5563;
-  color: white;
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: none;
+  .tabla-alumnos tr {
+    margin-bottom: 1.5em;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .tabla-alumnos td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+  }
+
+  .tabla-alumnos td::before {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: bold;
+    content: attr(data-label);
+  }
+
+  /* Ajustar los botones para que no se desborden */
+  .btn-calificaciones, .btn-editar {
+    display: block;
+    width: 100%;
+    margin: 6px 0 0 0;
+    text-align: center;
+    padding: 8px 0;
+  }
 }
 </style>
 {% endblock %}

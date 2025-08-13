@@ -34,10 +34,17 @@
     margin: 0;
   }
 
+  /* Contenedor que permite scroll horizontal */
+  .tabla-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* para smooth scroll en iOS */
+  }
+
   .boleta-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 15px;
+    min-width: 700px; /* Ajusta para que la tabla no se encoja demasiado */
   }
 
   .boleta-table thead {
@@ -65,6 +72,21 @@
     font-weight: bold;
     color: #2563eb;
   }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3f5d6b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #2f4755;
+  }
 </style>
 
 <div class="boleta-container">
@@ -75,31 +97,40 @@
     <p><strong>Grado y Grupo:</strong> {{ alumno.grupo.grado }}° {{ alumno.grupo.seccion }}</p>
     <p><strong>Ciclo Escolar:</strong> {{ alumno.grupo.ciclo_escolar }}</p>
     <p><strong>Profesor:</strong> {{ profesor.usuario.nombre }} </p>
-    <a href="{% url 'boleta_pdf' alumno.id %}" class="btn btn-primary" target="_blank">Descargar Boleta PDF</a>
+    <a href="{% url 'boleta_pdf' alumno.id %}" class="btn btn-primary" target="_blank" rel="noopener">Descargar Boleta PDF</a>
   </div>
 
-  <table class="boleta-table">
-    <thead>
-      <tr>
-        <th>Materia</th>
-        <th>Trimestre 1</th>
-        <th>Trimestre 2</th>
-        <th>Trimestre 3</th>
-        <th>Promedio</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for materia, trimestres in boleta.items %}
-      <tr>
-        <td>{{ materia }}</td>
-        <td>{{ trimestres.1 }}</td>
-        <td>{{ trimestres.2 }}</td>
-        <td>{{ trimestres.3 }}</td>
-        <td class="promedio">{{ trimestres.promedio }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="tabla-scroll">
+    <table class="boleta-table">
+      <thead>
+        <tr>
+          <th>Materia</th>
+          <th>Trimestre 1</th>
+          <th>Trimestre 2</th>
+          <th>Trimestre 3</th>
+          <th>Promedio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for materia, trimestres in boleta.items %}
+        <tr>
+          <td>{{ materia }}</td>
+          <td>{{ trimestres.1 }}</td>
+          <td>{{ trimestres.2 }}</td>
+          <td>{{ trimestres.3 }}</td>
+          <td class="promedio">{{ trimestres.promedio }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" style="text-align: right;"><strong>Promedio General:</strong></td>
+          <td class="promedio">{{ promedio_general }}</td>
+        </tr>
+      </tfoot>
+
+    </table>
+  </div>
 </div>
 
 {% endblock %}

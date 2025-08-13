@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from urllib3 import request
 from gestion.models import Profesor, Grupo, Alumno, Materia, AsignacionMateria, Calificacion, MateriaBase
 from registro.models import Usuario, Rol
 from gestion.forms import ProfesorForm, GrupoForm, AlumnoForm, MateriaForm
@@ -234,15 +235,20 @@ def lista_materias(request):
         grado = request.POST.get('grado')
 
         if materia_base_id == 'otro':
-            # Crear nueva materia base si no existe
             if not nueva_materia_nombre:
                 messages.error(request, "Debes ingresar el nombre de la nueva materia.")
                 return redirect('lista_materias')
             materia_base, created = MateriaBase.objects.get_or_create(nombre=nueva_materia_nombre)
         else:
-            materia_base = MateriaBase.objects.get(id=materia_base_id)
+            if not materia_base_id:
+                messages.error(request, "Debes seleccionar una materia.")
+                return redirect('lista_materias')
+            try:
+                materia_base = MateriaBase.objects.get(id=materia_base_id)
+            except MateriaBase.DoesNotExist:
+                messages.error(request, "La materia seleccionada no existe.")
+                return redirect('lista_materias')
 
-        # Verificar si ya existe la materia para ese grado
         if Materia.objects.filter(materia_base=materia_base, grado=grado).exists():
             messages.error(request, "La materia ya existe para ese grado.")
         else:
@@ -251,6 +257,7 @@ def lista_materias(request):
 
         return redirect('lista_materias')
 
+
     context = {
         'materias': materias,
         'materias_base': materias_base,
@@ -258,8 +265,15 @@ def lista_materias(request):
     return render(request, 'gestion/lista_materias.html', context)
 
 # Función para editar los nombres de las materias
-@csrf_exempt
+
 def editar_materia_base(request, materia_base_id):
+    print("Método:", request.method)
+    print("request.POST:", request.POST)
+    print("request.body:", request.body)
+    print("request.content_type:", request.content_type)
+    print("request.META.get('CONTENT_TYPE'):", request.META.get('CONTENT_TYPE'))
+
+
     materia_base = get_object_or_404(MateriaBase, id=materia_base_id)
 
     if request.method == 'POST':
@@ -278,13 +292,6 @@ def editar_materia_base(request, materia_base_id):
     # Si es GET, retornar un modal con formulario (o plantilla)
     return render(request, 'gestion/modals/form_editar_materia_base.html', {'materia_base': materia_base})
 
-    context = {
-        'asignaciones': asignaciones,
-        'profesores': Profesor.objects.all(),
-        'grupos': Grupo.objects.all(),
-        'materias': Materia.objects.all(),
-    }
-    return render(request, 'gestion/asignaciones_materias.html', context)
 
 # Función para la vista panel profesor
 def panel_profesor(request):
@@ -364,31 +371,41 @@ def ver_boleta(request, alumno_id):
     grupo = alumno.grupo
     profesor = Profesor.objects.filter(grupo=grupo).first()
     usuario = profesor.usuario 
-    
+
     datos = {}
+    suma_promedios = 0
+    cantidad_materias = 0
+
     for cal in calificaciones:
-        materia_nombre = cal.materia.materia_base.nombre  # aquí cambio
+        materia_nombre = cal.materia.materia_base.nombre
         if materia_nombre not in datos:
             datos[materia_nombre] = {'1': '', '2': '', '3': '', 'promedio': ''}
         datos[materia_nombre][str(cal.trimestre)] = cal.calificacion
-    
+
     for materia, trimestres in datos.items():
         try:
             notas = []
             for t in range(1, 4):
                 valor = trimestres.get(str(t), '')
                 if valor == '':
-                    valor = 0  # Si no hay calificación, se toma como 0
+                    valor = 0
                 notas.append(float(valor))
-            trimestres['promedio'] = round(sum(notas) / 3, 2)
+            promedio_materia = round(sum(notas) / 3, 2)
+            trimestres['promedio'] = promedio_materia
+            suma_promedios += promedio_materia
+            cantidad_materias += 1
         except:
             trimestres['promedio'] = ''
-    
+
+    # Calcular promedio general del alumno
+    promedio_general = round(suma_promedios / cantidad_materias, 2) if cantidad_materias > 0 else 0
+
     return render(request, 'gestion/ver_boleta.html', {
         'alumno': alumno,
-        'profesor' : profesor,
+        'profesor': profesor,
         'boleta': datos,
-        'usuario': usuario
+        'usuario': usuario,
+        'promedio_general': promedio_general  # pasamos al template
     })
 
 # Función boleta directivos
@@ -402,28 +419,37 @@ def ver_boleta_directivo(request, alumno_id):
     profesor = Profesor.objects.filter(grupo=grupo).first()
     
     datos = {}
+    suma_promedios = 0
+    cantidad_materias = 0
+
     for cal in calificaciones:
-        materia_nombre = cal.materia.materia_base.nombre  # aquí cambio
+        materia_nombre = cal.materia.materia_base.nombre
         if materia_nombre not in datos:
             datos[materia_nombre] = {'1': '', '2': '', '3': '', 'promedio': ''}
         datos[materia_nombre][str(cal.trimestre)] = cal.calificacion
-    
+
     for materia, trimestres in datos.items():
         try:
             notas = []
             for t in range(1, 4):
                 valor = trimestres.get(str(t), '')
                 if valor == '':
-                    valor = 0  # Si no hay calificación, se toma como 0
+                    valor = 0
                 notas.append(float(valor))
-            trimestres['promedio'] = round(sum(notas) / 3, 2)
+            promedio = round(sum(notas) / 3, 2)
+            trimestres['promedio'] = promedio
+            suma_promedios += promedio
+            cantidad_materias += 1
         except:
             trimestres['promedio'] = ''
-    
+
+    promedio_general = round(suma_promedios / cantidad_materias, 2) if cantidad_materias > 0 else 0
+
     return render(request, 'gestion/ver_boleta_directivo.html', {
         'alumno': alumno,
-        'profesor' : profesor,
+        'profesor': profesor,
         'boleta': datos,
+        'promedio_general': promedio_general,
     })
 
 # Función para gener la boleta en PDF
@@ -438,9 +464,12 @@ def boleta_pdf(request, alumno_id):
     boleta = {}
     materias = Materia.objects.filter(grado=alumno.grupo.grado)
 
+    suma_promedios = 0
+    cantidad_materias = 0
+
     for materia in materias:
         califs = Calificacion.objects.filter(alumno=alumno, materia=materia)
-        trimestre_dict = {1: None, 2: None, 3: None}  # None = Sin calificación registrada
+        trimestre_dict = {1: None, 2: None, 3: None}
 
         for cal in califs:
             if cal.trimestre in [1, 2, 3]:
@@ -449,7 +478,6 @@ def boleta_pdf(request, alumno_id):
                 except:
                     trimestre_dict[cal.trimestre] = None
 
-        # Calcular promedio dividiendo entre 3 y tomando como 0 si falta
         notas = []
         for t in [1, 2, 3]:
             valor = trimestre_dict[t]
@@ -458,6 +486,8 @@ def boleta_pdf(request, alumno_id):
             notas.append(valor)
 
         promedio = round(sum(notas) / 3, 2)
+        suma_promedios += promedio
+        cantidad_materias += 1
 
         boleta[materia.materia_base.nombre] = {
             "1": str(trimestre_dict[1]) if trimestre_dict[1] is not None else "-",
@@ -466,12 +496,15 @@ def boleta_pdf(request, alumno_id):
             "promedio": str(promedio),
         }
 
+    promedio_general = round(suma_promedios / cantidad_materias, 2) if cantidad_materias > 0 else 0
+
     template = get_template("gestion/boleta_pdf.html")
     html_content = template.render({
         "alumno": alumno,
         "profesor": profesor,
         "boleta": boleta,
         "fecha": date.today().strftime("%d/%m/%Y"),
+        "promedio_general": promedio_general,
     })
 
     response = HttpResponse(content_type="application/pdf")
@@ -526,29 +559,39 @@ def ver_boleta_tutor(request, alumno_id):
     profesor = Profesor.objects.filter(grupo=grupo).first()
     
     datos = {}
+    suma_promedios = 0
+    cantidad_materias = 0
+
     for cal in calificaciones:
-        materia_nombre = cal.materia.materia_base.nombre  # aquí cambio
+        materia_nombre = cal.materia.materia_base.nombre
         if materia_nombre not in datos:
             datos[materia_nombre] = {'1': '', '2': '', '3': '', 'promedio': ''}
         datos[materia_nombre][str(cal.trimestre)] = cal.calificacion
-    
+
     for materia, trimestres in datos.items():
         try:
             notas = []
             for t in range(1, 4):
                 valor = trimestres.get(str(t), '')
                 if valor == '':
-                    valor = 0  # Si no hay calificación, se toma como 0
+                    valor = 0
                 notas.append(float(valor))
-            trimestres['promedio'] = round(sum(notas) / 3, 2)
+            promedio = round(sum(notas) / 3, 2)
+            trimestres['promedio'] = promedio
+            suma_promedios += promedio
+            cantidad_materias += 1
         except:
             trimestres['promedio'] = ''
-    
+
+    promedio_general = round(suma_promedios / cantidad_materias, 2) if cantidad_materias > 0 else 0
+
     return render(request, 'gestion/ver_boleta_tutor.html', {
         'alumno': alumno,
-        'profesor' : profesor,
+        'profesor': profesor,
         'boleta': datos,
+        'promedio_general': promedio_general,
     })
+
 
 def importar_alumnos_excel(request):
     if request.method == 'POST' and request.FILES.get('archivo_excel'):
